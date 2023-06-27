@@ -6,8 +6,22 @@
 // @version     0.1
 // @author      dw5
 // @description 6/27/2023, 15:03:50
-// @run-at      document
+// @run-at      document-idle
 // ==/UserScript==
+
+// Create the script element
+var scriptElement = document.createElement('script');
+
+// Define the code to be executed inside the script element
+var code = `
+
+`;
+
+// Set the code as the content of the script element
+scriptElement.textContent = code;
+
+// Append the script element to the document body or any other desired location
+document.body.appendChild(scriptElement);
 
 function vanilloPlus() {
   var htmlCode = `
@@ -27,7 +41,7 @@ function vanilloPlus() {
                                       <a href="#">Privacy->Unlisted</a>
                                       <a href="#">Privacy->Private</a>
                                       <a href="#">Privacy->Gold</a>
-                                      <a href="#">Copy links</a>
+                                      <a id="jsxCopylink" href="#">Copy links</a>
                                     </div>
                                   </div>
                                 </td>
@@ -115,6 +129,38 @@ margin-top: 28px !important;
 
   var link = document.querySelector('a[href^="/v/"]');
   link.addEventListener('click', logCheckboxId);
+
+        var jsxCopylink = document.getElementById('jsxCopylink');
+      jsxCopylink.addEventListener("click", () => {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var linkIds = [];
+
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var closestRow = checkbox.closest('tr');
+            if (closestRow) {
+              var hrefElement = closestRow.querySelector('a[href^="/v/"]');
+              if (hrefElement) {
+                var id = hrefElement.getAttribute('href').split('/v/')[1];
+                linkIds.push(id);
+              }
+            }
+          }
+        });
+
+        var linkString = linkIds.map(function(id) {
+          return "https://vnlo.tv/" + id+" ";
+        }).join("\n");
+
+        navigator.clipboard.writeText(linkString)
+          .then(function() {
+            console.log("Link IDs copied to clipboard: ", linkString);
+          })
+          .catch(function(error) {
+            console.error("Failed to copy link IDs to clipboard: ", error);
+          });
+    });
+  
 }
 
 function checkAllCheckboxes() {
