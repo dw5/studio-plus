@@ -6,28 +6,13 @@
 // @version     0.1
 // @author      dw5
 // @description 6/27/2023, 15:03:50
-// @run-at      document-idle
+// @run-at      document
 // ==/UserScript==
 
 function vanilloPlus() {
   var htmlCode = `
-                            <div id="hidevs" style="width: 100%;padding-top: 28px;padding-left: 35vw;z-index: 1;position: fixed;color: #fff;backdrop-filter: blur(50px);background-color: #ff790014;">
+                            <div id="hidevs" style="width: 100%;padding-top: 70px;padding-left: 35vw;z-index: 1;position: fixed;color: #fff;backdrop-filter: blur(50px);background-color: #ff790014;">
                               <tr>
-                                <td class="align-middle">
-                                  <div class="v-input v-input--horizontal v-input--density-default v-checkbox">
-                                    <div class="v-input__control">
-                                      <div class="v-selection-control v-selection-control--inline v-selection-control--density-default v-checkbox-btn">
-                                        <div class="v-selection-control__wrapper">
-                                          <div class="v-selection-control__input">
-                                            <i class="mdi-checkbox-blank-outline mdi v-icon notranslate v-icon--size-default" aria-hidden="true"></i>
-                                            <input id="checkbox-3" aria-disabled="false" type="checkbox" value="true" indeterminate="false" indeterminateicon="$checkboxIndeterminate" aria-describedby="checkbox-3-messages">
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="v-input__details"></div>
-                                  </div>
-                                </td>
                                 <td><small id="hidevsall">[select all]</small> <b id="hidevscount">XX</b> Selected videos </td>
                                 <td>
                                   <div class="dropdown">
