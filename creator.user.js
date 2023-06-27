@@ -59,9 +59,9 @@ function vanilloPlus() {
                                   <div class="dropdown">
                                     <button class="dropdown-button" style="background-color: red;">Danger zone</button>
                                     <div class="dropdown-content">
-                                      <a href="#">Delete</a>
+                                      <a href="#">======</a>
                                       <a href="#">Download (Pro only)</a>
-                                      <a href="#">Option 3</a>
+                                      <a href="#">Delete</a>
                                     </div>
                                   </div>
                                 </td>
@@ -160,7 +160,7 @@ margin-top: 28px !important;
             console.error("Failed to copy link IDs to clipboard: ", error);
           });
     });
-  
+
 }
 
 function checkAllCheckboxes() {
