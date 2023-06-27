@@ -94,14 +94,15 @@ function vanilloPlus() {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
+  background-color: #202020cc;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  backdrop-filter: blur(50px);
 }
 
 .dropdown-content a {
-  color: black;
+  color: #fff;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
