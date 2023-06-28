@@ -26,9 +26,9 @@ function vanilloPlus() {
                                       <div class="dropdown-submenu">
                                         <button class="dropbtn-submenu">Privacy</button>
                                         <div class="dropdown-submenu-content">
-                                          <a href="#">🔓 Public</a>
-                                          <a href="#">🔓 Unlisted</a>
-                                          <a href="#">🔒 Private</a>
+                                          <a id="jsxPrivate" href="#">🔒 Private</a>
+                                          <a id="jsxUnlisted" href="#">🔓 Unlisted</a>
+                                          <a id="jsxPublic" href="#">🌍 Public</a>
                                         </div>
                                       </div>
                                       <a id="jsxCopylink" href="#">🔗 Copy links</a>
@@ -144,8 +144,8 @@ margin-top: 28px !important;
   var link = document.querySelector('a[href^="/v/"]');
   link.addEventListener('click', logCheckboxId);
 
-        var jsxCopylink = document.getElementById('jsxCopylink');
-      jsxCopylink.addEventListener("click", () => {
+        /*copylink*/ var jsxCopylink = document.getElementById('jsxCopylink');
+        jsxCopylink.addEventListener("click", () => {
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');
         var linkIds = [];
 
@@ -173,7 +173,134 @@ margin-top: 28px !important;
           .catch(function(error) {
             console.error("Failed to copy link IDs to clipboard: ", error);
           });
+    }); // copylink
+
+      /*jsxPrivate*/ var jsxPrivate = document.getElementById('jsxPrivate');
+        jsxPrivate.addEventListener("click", () => {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var linkIds = [];
+
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var closestRow = checkbox.closest('tr');
+            if (closestRow) {
+              var hrefElement = closestRow.querySelector('a[href^="/v/"]');
+              if (hrefElement) {
+                var id = hrefElement.getAttribute('href').split('/v/')[1];
+                linkIds.push(id);
+              }
+            }
+          }
+        });
+
+  linkIds.forEach(function(id) {
+    console.log("PRIVATE" + id);
+  });
+
+    }); // jsxPrivate
+
+        /*jsxUnlisted*/ var jsxUnlisted = document.getElementById('jsxUnlisted');
+        jsxUnlisted.addEventListener("click", () => {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var linkIds = [];
+
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var closestRow = checkbox.closest('tr');
+            if (closestRow) {
+              var hrefElement = closestRow.querySelector('a[href^="/v/"]');
+              if (hrefElement) {
+                var id = hrefElement.getAttribute('href').split('/v/')[1];
+                linkIds.push(id);
+              }
+            }
+          }
+        });
+
+  linkIds.forEach(function(id) {
+
+    console.log("unlisted: " + id);
+
+
+fetch("https://api.vanillo.tv/v1/videos/"+id, {
+  credentials: "omit",
+  headers: {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0",
+    Accept: "*/*",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-site"
+  },
+  referrer: "https://vanillo.tv/",
+  method: "OPTIONS",
+  mode: "cors"
+})
+  .then(function(response) {
+    var headers = {};
+    response.headers.forEach(function(value, name) {
+      headers[name] = value;
     });
+
+    // Use the obtained headers for the PATCH request
+    fetch("https://api.vanillo.tv/v1/videos/"+id, {
+      credentials: "include",
+      headers: {
+        ...headers,
+        "content-type": "application/json"
+      },
+      referrer: "https://vanillo.tv/",
+      body: JSON.stringify({
+        //title: "Abi run",
+        //tags: [""],
+        privacy: "unlisted"//,
+        //category: "film_and_animation"
+      }),
+      method: "PATCH",
+      mode: "cors"
+    })
+      .then(function(response) {
+        // Handle the response of the PATCH request
+        console.log("Done?");
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+
+  });
+
+    });  // jsxUnlisted
+
+          /*jsxPublic*/ var jsxUnlisted = document.getElementById('jsxPublic');
+        jsxPublic.addEventListener("click", () => {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var linkIds = [];
+
+        checkboxes.forEach(function(checkbox) {
+          if (checkbox.checked) {
+            var closestRow = checkbox.closest('tr');
+            if (closestRow) {
+              var hrefElement = closestRow.querySelector('a[href^="/v/"]');
+              if (hrefElement) {
+                var id = hrefElement.getAttribute('href').split('/v/')[1];
+                linkIds.push(id);
+              }
+            }
+          }
+        });
+
+  linkIds.forEach(function(id) {
+
+    console.log("public: " + id);
+
+  }
+
+    }); // jsxPublic
+
 
 monitorCheckboxes();
 updateHidevsAnimation()
@@ -275,9 +402,9 @@ function applyModifications() {
   if (table) {
     vanilloPlus();
   }
-  }else { console.log("Creator PLUS: Alive, but wrong page");
+  } else { console.log("Creator PLUS: Alive, but wrong page");
     // If the table is not found, wait and try again
-    setTimeout(applyModifications, 5000);
+    //setTimeout(applyModifications, 5000);
   }
 
 }
@@ -304,3 +431,7 @@ function applyModifications() {
 
 // Apply modifications initially
 applyModifications();
+// Monitor changes to window.location.pathname using the popstate event
+setTimeout(function() {
+  window.addEventListener('popstate', applyModifications);
+}, 5000);
