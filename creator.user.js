@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://*.vanillo.tv/*
 // @grant       none
-// @version     0.1
+// @version     0.5
 // @author      dw5
 // @description 6/27/2023, 15:03:50
 // @run-at      document-idle
@@ -18,20 +18,20 @@ function vanilloPlus() {
                                   <div class="dropdown">
                                     <button class="dropdown-button">Edit</button>
                                     <div class="dropdown-content">
-                                      <a href="#">Video title</a>
-                                      <a href="#">Video description</a>
-                                      <a href="#">Video tags</a>
-                                      <a href="#">Video category</a>
-                                      <a href="#">Video Language</a>
+                                      <a>Video title</a>
+                                      <a>Video description</a>
+                                      <a>Video tags</a>
+                                      <a>Video category</a>
+                                      <a>Video Language</a>
                                       <div class="dropdown-submenu">
                                         <button class="dropbtn-submenu">Privacy</button>
                                         <div class="dropdown-submenu-content">
-                                          <a id="jsxPrivate" href="#">🔒 Private</a>
-                                          <a id="jsxUnlisted" href="#">🔓 Unlisted</a>
-                                          <a id="jsxPublic" href="#">🌍 Public</a>
+                                          <a id="jsxPrivate">🔒 Private</a>
+                                          <a id="jsxUnlisted">🔓 Unlisted</a>
+                                          <a id="jsxPublic">🌍 Public</a>
                                         </div>
                                       </div>
-                                      <a id="jsxCopylink" href="#">🔗 Copy links</a>
+                                      <a id="jsxCopylink">🔗 Copy links</a>
                                     </div>
                                   </div>
                                 </td>
@@ -39,9 +39,9 @@ function vanilloPlus() {
                                   <div class="dropdown">
                                     <button class="dropdown-button">Add to playlist</button>
                                     <div class="dropdown-content">
-                                      <a href="#">Option 1</a>
-                                      <a href="#">Option 2</a>
-                                      <a href="#">Option 3</a>
+                                      <a>Option 1</a>
+                                      <a>Option 2</a>
+                                      <a>Option 3</a>
                                     </div>
                                   </div>
                                 </td>
@@ -49,9 +49,9 @@ function vanilloPlus() {
                                   <div class="dropdown">
                                     <button class="dropdown-button" style="background-color: red;">Danger zone</button>
                                     <div class="dropdown-content">
-                                      <a href="#">======</a>
-                                      <a href="#">Download (Pro only)</a>
-                                      <a href="#">Delete</a>
+                                      <a>======</a>
+                                      <a>Download (Pro only)</a>
+                                      <a>Delete</a>
                                     </div>
                                   </div>
                                 </td>
@@ -92,6 +92,7 @@ transform: translateY(-100%);
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   backdrop-filter: blur(50px);
+  cursor: pointer;
 }
 
 .dropdown-content a {
@@ -297,7 +298,7 @@ fetch("https://api.vanillo.tv/v1/videos/"+id, {
 
     console.log("public: " + id);
 
-  }
+  });
 
     }); // jsxPublic
 
