@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Better Vanillo - vanillo.tv
 // @namespace   Violentmonkey Scripts
-// @match       https://vanillo.tv/creators/videos
+// @match       https://*.vanillo.tv/*
 // @grant       none
 // @version     0.1
 // @author      dw5
@@ -9,25 +9,11 @@
 // @run-at      document-idle
 // ==/UserScript==
 
-// Create the script element
-var scriptElement = document.createElement('script');
-
-// Define the code to be executed inside the script element
-var code = `
-
-`;
-
-// Set the code as the content of the script element
-scriptElement.textContent = code;
-
-// Append the script element to the document body or any other desired location
-document.body.appendChild(scriptElement);
-
 function vanilloPlus() {
   var htmlCode = `
-                            <div id="hidevs" style="width: 100%;padding-top: 70px;padding-left: 35vw;z-index: 1;position: fixed;color: #fff;backdrop-filter: blur(50px);background-color: #ff790014;">
+                            <div id="hidevs" class="hidehidevs" style="width: 100%;padding-top: 70px;padding-left: 35vw;z-index: 1;position: fixed;color: #fff;backdrop-filter: blur(50px);background-color: #ff790014;transition: transform 0.3s ease;">
                               <tr>
-                                <td><small id="hidevsall">[select all]</small> <b id="hidevscount">XX</b> Selected videos </td>
+                                <td><small id="hidevsall">[select all]</small> <b id="hidevscount">0</b> Selected videos </td>
                                 <td>
                                   <div class="dropdown">
                                     <button class="dropdown-button">Edit</button>
@@ -81,6 +67,9 @@ function vanilloPlus() {
 
   // Define your CSS rules
   var cssCode = `
+.hidehidevs {
+transform: translateY(-100%);
+}
 .dropdown {
   position: relative;
   display: inline-block;
@@ -186,7 +175,19 @@ margin-top: 28px !important;
           });
     });
 
-monitorCheckboxes()
+monitorCheckboxes();
+updateHidevsAnimation()
+}
+
+function updateHidevsAnimation() {
+  var hidevsCount = parseInt(document.getElementById('hidevscount').textContent);
+  var hidevsElement = document.getElementById('hidevs');
+
+  if (hidevsCount === 0) {
+    hidevsElement.classList.add('hidehidevs');
+  } else {
+    hidevsElement.classList.remove('hidehidevs');
+  }
 }
 
 function checkAllCheckboxes() {
@@ -228,6 +229,7 @@ function checkAllCheckboxes() {
 }
 
 function monitorCheckboxes() {
+  // one by one
   var checkboxes = document.querySelectorAll('input[type="checkbox"]');
   var countElement = document.getElementById('hidevscount');
 
@@ -249,13 +251,13 @@ function monitorCheckboxes() {
           checkboxIcon.classList.remove('mdi-checkbox-marked');
           checkboxIcon.classList.add('mdi-checkbox-blank-outline');
         }
-      }
+      } updateHidevsAnimation();
     });
   });
 
   // Update video count initially
-  var checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
-  countElement.textContent = checkedCount;
+  //var checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+  //countElement.textContent = checkedCount;
 }
 
 
@@ -267,17 +269,21 @@ function logCheckboxId(event) {
 
 
 function applyModifications() {
+
+  if (window.location.pathname == "/creators/videos") {
   var table = document.querySelector('table'); //document.querySelector('table');
   if (table) {
     vanilloPlus();
-  } else {
-    // If the table is not found, wait and try again
-    setTimeout(applyModifications, 500);
   }
+  }else { console.log("Creator PLUS: Alive, but wrong page");
+    // If the table is not found, wait and try again
+    setTimeout(applyModifications, 5000);
+  }
+
 }
 
 // Watch for changes in the DOM
-var observer = new MutationObserver(function(mutations) {
+/*var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     // Check if the table is removed from the DOM
     if (mutation.removedNodes && mutation.removedNodes.length > 0) {
@@ -291,10 +297,10 @@ var observer = new MutationObserver(function(mutations) {
       }
     }
   });
-});
+});*/
 
 // Start observing changes in the DOM
-observer.observe(document.body, { childList: true, subtree: true });
+//observer.observe(document.body, { childList: true, subtree: true });
 
 // Apply modifications initially
 applyModifications();
