@@ -162,6 +162,7 @@ margin-top: 28px !important;
           });
     });
 
+monitorCheckboxes()
 }
 
 function checkAllCheckboxes() {
@@ -210,6 +211,37 @@ function checkAllCheckboxes() {
 
   // Update video count based on the checked count
   countElement.textContent = isChecked ? (checkboxes.length - checkedCount).toString() : '0';
+}
+
+function monitorCheckboxes() {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  var countElement = document.getElementById('hidevscount');
+
+  checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      // Update checkedCount based on the current checked status
+      var checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+
+      // Update video count based on the checked count
+      countElement.textContent = checkedCount;
+
+      // Toggle checkbox icon based on checked status
+      var checkboxIcon = this.parentElement.querySelector('i');
+      if (checkboxIcon) {
+        if (this.checked) {
+          checkboxIcon.classList.remove('mdi-checkbox-blank-outline');
+          checkboxIcon.classList.add('mdi-checkbox-marked');
+        } else {
+          checkboxIcon.classList.remove('mdi-checkbox-marked');
+          checkboxIcon.classList.add('mdi-checkbox-blank-outline');
+        }
+      }
+    });
+  });
+
+  // Update video count initially
+  var checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+  countElement.textContent = checkedCount;
 }
 
 
