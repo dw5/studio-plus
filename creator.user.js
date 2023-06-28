@@ -37,11 +37,15 @@ function vanilloPlus() {
                                       <a href="#">Video tags</a>
                                       <a href="#">Video category</a>
                                       <a href="#">Video Language</a>
-                                      <a href="#">Privacy->Public</a>
-                                      <a href="#">Privacy->Unlisted</a>
-                                      <a href="#">Privacy->Private</a>
-                                      <a href="#">Privacy->Gold</a>
-                                      <a id="jsxCopylink" href="#">Copy links</a>
+                                      <div class="dropdown-submenu">
+                                        <button class="dropbtn-submenu">Privacy</button>
+                                        <div class="dropdown-submenu-content">
+                                          <a href="#">🔓 Public</a>
+                                          <a href="#">🔓 Unlisted</a>
+                                          <a href="#">🔒 Private</a>
+                                        </div>
+                                      </div>
+                                      <a id="jsxCopylink" href="#">🔗 Copy links</a>
                                     </div>
                                   </div>
                                 </td>
@@ -112,6 +116,26 @@ function vanilloPlus() {
   display: block;
 }
 
+.dropdown-submenu {
+  position: relative;
+  padding: 12px 16px;
+}
+
+.dropdown-submenu-content {
+  display: none;
+  position: absolute;
+  background-color: #202020cc;
+  backdrop-filter: blur(50px);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  left: 100%;
+  top: 0;
+}
+
+.dropdown-submenu:hover .dropdown-submenu-content {
+  display: block;
+}
+
 div[class="w-full lg:w-1/5 pb-3 lg:pb-0 lg:pr-3 h-full"] {
 margin-top: 28px !important;
 }
@@ -168,49 +192,39 @@ monitorCheckboxes()
 function checkAllCheckboxes() {
   var checkboxes = document.querySelectorAll('input[type="checkbox"]');
   var countElement = document.getElementById('hidevscount');
-  var isChecked = false;
-  var checkedCount = 0;
+  var checkedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
 
-  checkboxes.forEach(function(checkbox) {
-    if (checkbox.checked) {
-      checkedCount++;
-    }
+  if (checkedCount === checkboxes.length) {
+    // Deselect all checkboxes if all selected
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = false;
 
-    // Toggle checkbox based on the checked status of the first checkbox
-    if (checkbox === checkboxes[0]) {
-      checkbox.checked = !checkbox.checked;
-    } else {
-      checkbox.checked = checkboxes[0].checked;
-    }
-
-    // Log checkbox ID
-    if (checkbox.checked) {
-      var closestRow = checkbox.closest('tr');
-      if (closestRow) {
-        var hrefElement = closestRow.querySelector('a[href^="/v/"]');
-        if (hrefElement) {
-          var id = hrefElement.getAttribute('href').split('/v/')[1];
-          console.log(id);
-        }
-      }
-    }
-
-    // Toggle checkbox icon based on checked status
-    var checkboxIcon = checkbox.parentElement.querySelector('i');
-    if (checkboxIcon) {
-      if (checkbox.checked) {
-        checkboxIcon.classList.remove('mdi-checkbox-blank-outline');
-        checkboxIcon.classList.add('mdi-checkbox-marked');
-        isChecked = true;
-      } else {
+      // Toggle checkbox icon based on checked status
+      var checkboxIcon = checkbox.parentElement.querySelector('i');
+      if (checkboxIcon) {
         checkboxIcon.classList.remove('mdi-checkbox-marked');
         checkboxIcon.classList.add('mdi-checkbox-blank-outline');
       }
-    }
-  });
+    });
 
-  // Update video count based on the checked count
-  countElement.textContent = isChecked ? (checkboxes.length - checkedCount).toString() : '0';
+    // Update video count to display none selected
+    countElement.textContent = 0;
+  } else {
+    // Select all checkboxes if none selected or some selected
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = true;
+
+      // Toggle checkbox icon based on checked status
+      var checkboxIcon = checkbox.parentElement.querySelector('i');
+      if (checkboxIcon) {
+        checkboxIcon.classList.remove('mdi-checkbox-blank-outline');
+        checkboxIcon.classList.add('mdi-checkbox-marked');
+      }
+    });
+
+    // Update video count to display all checkboxes
+    countElement.textContent = checkboxes.length;
+  }
 }
 
 function monitorCheckboxes() {
