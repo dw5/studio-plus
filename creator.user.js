@@ -2,8 +2,8 @@
 // @name        Better Vanillo - vanillo.tv
 // @namespace   Violentmonkey Scripts
 // @match       https://*.vanillo.tv/*
-// @grant       none
-// @version     0.5
+// @grant GM_xmlhttpRequest
+// @version     0.1
 // @author      dw5
 // @description 6/27/2023, 15:03:50
 // @run-at      document-idle
@@ -218,61 +218,61 @@ margin-top: 28px !important;
           }
         });
 
-  linkIds.forEach(function(id) {
+  // @grant GM_xmlhttpRequest
 
-    console.log("unlisted: " + id);
+linkIds.forEach(function(id) {
+  console.log("unlisted: " + id);
 
-
-fetch("https://api.vanillo.tv/v1/videos/"+id, {
-  credentials: "omit",
-  headers: {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0",
-    Accept: "*/*",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-site"
-  },
-  referrer: "https://vanillo.tv/",
-  method: "OPTIONS",
-  mode: "cors"
-})
-  .then(function(response) {
-    var headers = {};
-    response.headers.forEach(function(value, name) {
-      headers[name] = value;
-    });
-
-    // Use the obtained headers for the PATCH request
-    fetch("https://api.vanillo.tv/v1/videos/"+id, {
-      credentials: "include",
-      headers: {
-        ...headers,
-        "content-type": "application/json"
-      },
-      referrer: "https://vanillo.tv/",
-      body: JSON.stringify({
-        //title: "Abi run",
-        //tags: [""],
-        privacy: "unlisted"//,
-        //category: "film_and_animation"
-      }),
-      method: "PATCH",
-      mode: "cors"
-    })
-      .then(function(response) {
-        // Handle the response of the PATCH request
-        console.log("Done?");
-      })
-      .catch(function(error) {
-        console.error(error);
+  GM_xmlhttpRequest({
+    method: "OPTIONS",
+    url: "https://api.vanillo.tv/v1/videos/" + id,
+    headers: {
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0",
+      Accept: "*/*",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-site"
+    },
+    referrer: "https://vanillo.tv/",
+    onload: function(response) {
+      var headers = {};
+      response.responseHeaders.split("\n").forEach(function(line) {
+        var parts = line.split(":");
+        if (parts.length === 2) {
+          var name = parts[0].trim();
+          var value = parts[1].trim();
+          headers[name] = value;
+        }
       });
-  })
-  .catch(function(error) {
-    console.error(error);
-  });
 
+      // Use the obtained headers for the PATCH request
+      GM_xmlhttpRequest({
+        method: "PATCH",
+        url: "https://api.vanillo.tv/v1/videos/" + id,
+        headers: {
+          ...headers,
+          "content-type": "application/json"
+        },
+        referrer: "https://vanillo.tv/",
+        data: JSON.stringify({
+          privacy: "unlisted"
+        }),
+        onload: function(response) {
+          // Handle the response of the PATCH request
+          console.log("Done?");
+        },
+        onerror: function(error) {
+          console.error(error);
+        }
+      });
+    },
+    onerror: function(error) {
+      console.error(error);
+    }
   });
+});
+
 
     });  // jsxUnlisted
 
@@ -410,25 +410,22 @@ function applyModifications() {
 
 }
 
-// Watch for changes in the DOM
-/*var observer = new MutationObserver(function(mutations) {
-  mutations.forEach(function(mutation) {
-    // Check if the table is removed from the DOM
-    if (mutation.removedNodes && mutation.removedNodes.length > 0) {
-      for (var i = 0; i < mutation.removedNodes.length; i++) {
-        var removedNode = mutation.removedNodes[i];
-        if (removedNode.nodeName === 'TABLE') {
-          // Apply modifications again
-          applyModifications();
-          break;
-        }
+// Create a new MutationObserver instance
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'childList' && mutation.target.nodeName === 'TITLE') {
+      const newTitle = mutation.target.textContent.trim();
+      const targetTitle = 'Creator Portal - Vanillo';
+
+      if (newTitle === targetTitle) {
+        applyModifications();
       }
     }
   });
-});*/
+});
 
-// Start observing changes in the DOM
-//observer.observe(document.body, { childList: true, subtree: true });
+// Start observing the document's <title> element
+observer.observe(document.querySelector('title'), { subtree: true, childList: true });
 
 // Apply modifications initially
 applyModifications();
